@@ -162,24 +162,27 @@ class GameCore {
 // =========================== GAMES ===========================
 class GameCallibrator extends GameCore {
     is_dark = true;
+    object = null;
 
-    constructor() {
-        super();
-        background(this.is_dark ? 10 : 255);
-        noLoop();
+    constructor(scene) {
+        super(scene);
+        let colorCode = this.is_dark ? '#111' : '#fff';
+        this.object = new SolidBackground(colorCode)
+        scene.addObject(this.object);
     }
 
-    update(event = null) {
+    shotEventAction(event) {
         if (event) {
-            super._shot();
+            this._shot();
             if (this.is_dark) {
                 event.driver.set_black(event.package);
+                this.object.colorCode = '#fff';
+                this.is_dark = false;
             } else {
                 event.driver.set_white(event.package);
+                this.object.colorCode = '#111';
+                this.is_dark = true;
             }
-            super._hit();
-            this.is_dark = !this.is_dark;
-            background(this.is_dark ? 10 : 255);
         }
     }
 }
@@ -198,7 +201,7 @@ class GameBalls extends GameCore {
             let color_idx = randomInt(0, GameCore.codes.length);
             let color_code = GameCore.codes[color_idx];
             if (!(color_code in this.objects)) {
-                let object = new BallActor('#'+color_code, 0.5);
+                let object = new BallActor('#' + color_code, 0.5);
                 this.addObject(color_code, object);
             }
         } else {
@@ -222,7 +225,7 @@ class GameMoveBalls extends GameCore {
             let color_idx = randomInt(0, GameCore.codes.length);
             let color_code = GameCore.codes[color_idx];
             if (!(color_code in this.objects)) {
-                let object = new MoveBallActor('#'+color_code, 0.5, 1);
+                let object = new MoveBallActor('#' + color_code, 0.5, 1);
                 this.addObject(color_code, object);
             }
         } else {
